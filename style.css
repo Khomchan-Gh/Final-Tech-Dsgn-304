@@ -1,0 +1,25 @@
+html, body {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0;
+  background-color: black;
+}
+
+canvas {
+
+    display: block;
+    margin: 0 auto;
+    width: 1920px;
+    height: 1080px;
+}
+
+/* .SkillButton:disabled {
+  background-image: url(Assets/Button/Switch-Mode-Disable.png);
+} */
+
+/* .hidden {
+  display: none;
+} */
