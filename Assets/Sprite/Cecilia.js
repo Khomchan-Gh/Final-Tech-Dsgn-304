@@ -59,9 +59,12 @@ class Cecilia {
     //Load sprite
     this.CeciliaStandBy = ceciliaStandby
     this.CeciliaAtk = ceciliaAttack
-    this.CeciliaSkill = ceciliaSkill
+
     this.CeciliaAssault = ceciliaAssault
+    this.CeciliaAssaultAtk = ceciliaAssaultAttack
+
     this.CeciliaOverDrive = ceciliaOverDrive
+    this.CeciliaOverDriveAtk = ceciliaOverDriveAttack
 
     //Character Status & Animation
     this.isAttacked = false;
@@ -118,8 +121,8 @@ class Cecilia {
   
     show(){
     
-    if (this.isAttacking === false && this.isSwitching === false && this.isAssaultMode === false && this.isOverDrive === false){
-    image(this.CeciliaStandBy,150,75, width*0.25, height*0.6)
+    if (this.isAttacking === false && this.isSwitching === false && this.isAssaultMode === false && this.isOverDrive === false && this.isChargeAttacking === false && isAtkMouseOver === false && isSpAtkMouseOver === false){
+    image(this.CeciliaStandBy,150,75, width*0.35, height*0.6)
     };
   
   }
@@ -352,13 +355,25 @@ attack2(ue){
   }
 
   update() {
-    if (this.isAssaultMode) {
-      image(this.CeciliaAssault, 150, 75, width*0.25, height*0.6);
-    } 
+
     
-    if (this.isOverDrive) {
-      image(this.CeciliaOverDrive, 150, 75, width*0.25, height*0.6);
+    if(this.isAttacking && !this.isAssaultMode && !this.isOverDrive || isAtkMouseOver && !this.isAssaultMode && !this.isOverDrive || isSpAtkMouseOver && !this.isAssaultMode && !this.isOverDrive || this.isChargeAttacking && !this.isAssaultMode && !this.isOverDrive) {
+      image(this.CeciliaAtk, 150, 75, width*0.35, height*0.6);
     }
+
+    if (this.isAssaultMode && (isAtkMouseOver || isSpAtkMouseOver)) {
+      image(this.CeciliaAssaultAtk, 150, 75, width*0.35, height*0.6);
+    } else if (this.isAssaultMode) {
+      image(this.CeciliaAssault, 150, 75, width*0.35, height*0.6);
+    }
+    
+    if (this.isOverDrive && (isAtkMouseOver || isSpAtkMouseOver)) {
+      image(this.CeciliaOverDriveAtk, 150, 75, width*0.35, height*0.6);
+    } else if (this.isOverDrive) {
+      image(this.CeciliaOverDrive, 150, 75, width*0.35, height*0.6);
+    }
+
+    
 
   }
 
@@ -428,4 +443,92 @@ attack2(ue){
     }
 
   }
+}
+
+class MemoryBlade {
+  constructor(){
+    this.x = this.x;
+    this.y = 30;
+    this.direction = this.direction;
+
+    //load assets
+    this.AssaultMemoryBlade = ceciliaAssaultMemoryBlade
+    this.OverDriveMemoryBlade = ceciliaOverDriveMemoryBladeBack
+
+  }
+
+  update(){
+
+  if (cecilia.isAssaultMode && isSpAtkMouseOver) {
+   
+    if (this.y <= 30) {
+      this.direction = 0.1; // Set the direction to move down
+    } else if (this.y >= 55) {
+      this.direction = -0.1; // Set the direction to move up
+    }
+    
+    this.y += this.direction;
+
+    image(this.AssaultMemoryBlade,125, this.y, width*0.35, height*0.6);
+    }
+
+    if (cecilia.isOverDrive) {
+
+      if (this.y <= 30) {
+        this.direction = 0.1; // Set the direction to move down
+      } else if (this.y >= 55) {
+        this.direction = -0.1; // Set the direction to move up
+      }
+      
+      this.y += this.direction;
+  
+      image(this.OverDriveMemoryBlade,140, this.y, width*0.35, height*0.6);
+      }
+
+  }
+
+}
+
+class OverFlowBlade {
+  constructor(){
+    this.x = this.x;
+    this.y = 20;
+    this.direction = this.direction;
+
+    //load assets
+    this.OverFlowBlade = ceciliaOverDriveMemoryBlade
+    this.AssaultBlade = ceciliaAssaultOverFlowBlade
+    
+  }
+
+  update(){
+
+    if (cecilia.isOverDrive && isSpAtkMouseOver) {
+
+      if (this.y <= 20) {
+        this.direction = 0.1; // Set the direction to move down
+      } else if (this.y >= 30) {
+        this.direction = -0.1; // Set the direction to move up
+      }
+      
+      this.y += this.direction;
+  
+      image(this.OverFlowBlade,180, this.y, width*0.35, height*0.6);
+      }
+
+      if (cecilia.isAssaultMode && isAtkMouseOver) {
+        
+        if (this.y <= 20) {
+          this.direction = 0.1; // Set the direction to move down
+        } else if (this.y >= 25) {
+          this.direction = -0.1; // Set the direction to move up
+        }
+        
+        this.y += this.direction;
+    
+        image(this.AssaultBlade,160, this.y, width*0.35, height*0.6);
+        }
+
+  }
+
 }
