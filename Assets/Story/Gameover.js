@@ -12,5 +12,6 @@ function gameoverscreen() {
     cecilia.startOver();
     ue.hp = ue.maxhp;
     eyeCount = eyeMinCount;
+    turnPassed = resetTurn;
 
     }

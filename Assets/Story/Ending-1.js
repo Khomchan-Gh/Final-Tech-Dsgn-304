@@ -10,6 +10,7 @@ function ending1() {
     cecilia.startOver();
     cecilia.damageDealt = 0;
     ue.hp = ue.maxhp;
-    eyeCount = eyeMinCount
+    eyeCount = eyeMinCount;
+    turnPassed = resetTurn;
   
   }

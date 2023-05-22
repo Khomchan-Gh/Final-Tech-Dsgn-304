@@ -1,5 +1,9 @@
 let currentScreen = "menu";
 let isPlayerTurn;
+
+let turnPassed = 1;
+let resetTurn = 1;
+
 let cecilia;
 let playerHitEffect;
 let ue;
@@ -7,6 +11,8 @@ let ueHp;
 let eyePortal;
 let novecentoBold, novecentoNormal, novecentoLight;
 let actionDelay;
+let playerActioDelay = 0;
+let endingDelay = 0;
 let screenDelay;
 
 let damageDisplayText; 
@@ -66,10 +72,14 @@ function preload() {
   ceciliaAssault = loadImage('Assets/Characters/Cecilia-Assault.png');
   ceciliaOverDrive = loadImage('Assets/Characters/Cecilia-OverDrive.png');
   ceciliaSkill = loadImage('Assets/Characters/Cecilia-Stance2.png');
+  
+  //load character's protrait
   ceciliaProtrait = loadImage('Assets/Image/Cecilia.png');
   ceciliaDamagedProtrait = loadImage('Assets/Image/Cecilia-Damaged.png');
   ceciliaProtraitOverDrive = loadImage('Assets/Image/Cecilia-Portrait-OverDrive.png');
   ceciliaDamagedProtraitOverDrive = loadImage('Assets/Image/OverDrive-Cecilia-Damaged.png');
+  ceciliaKoProtrait = loadImage('Assets/Image/Cecilia-Death.png');
+  ceciliaOverDriveKoProtrait = loadImage('Assets/Image/Overdrive-Cecilia-Death.png');
 
   //load player's hit effect
   ceciliaNormalHit1 = loadImage('Assets/Hit-Effect/Normal-Attack-1.png');
@@ -265,6 +275,7 @@ function drawGamePlayScreen() {
   statusMp();
   statusSp();
   ceciliaName();
+  cecilia.preventExceedStatus();
 
   if(!buttonCreated) {
     skillButton();
@@ -287,12 +298,31 @@ function drawGamePlayScreen() {
   }
 
   if (cecilia.hp <= 0 || ue.hp <= 0) {
+      endingDelay ++;
 
       if (cecilia.hp <= 0) {
-          currentScreen = "game_over";
+          cecilia.isDead();
+          
+          AtkButton.attribute("disabled", true);
+          SkillButton.attribute("disabled", true);
+          SpButton.attribute("disabled", true);
+          SpAttackButton.attribute("disabled", true);
 
-      } else {
+          if (endingDelay == 700) {
+          currentScreen = "game_over";
+        }
+
+      } else if (ue.hp <= 0){
+          ue.isDead();
+
+          AtkButton.attribute("disabled", true);
+          SkillButton.attribute("disabled", true);
+          SpButton.attribute("disabled", true);
+          SpAttackButton.attribute("disabled", true);
+
+          if (endingDelay == 700) {
           currentScreen = "ending_1";
+        }
           
       }
 
@@ -301,26 +331,46 @@ function drawGamePlayScreen() {
   }
   
   if (eyeCount > eyeMaxCount) {
+
+      endingDelay ++;
+
+      AtkButton.attribute("disabled", true);
+      SkillButton.attribute("disabled", true);
+      SpButton.attribute("disabled", true);
+      SpAttackButton.attribute("disabled", true);
+      
+      cecilia.isDead();
+
+      if (endingDelay == 700) {
       currentScreen = "ending_2";
-   
+      }
+
   }
     
-    if (isPlayerTurn) {
+    if (isPlayerTurn && cecilia.isDeath === false) {
 
     actionDelay = 0;
     cecilia.isAttacked = false;
-    cecilia.damageDealt = cecilia.minDamageDealt
 
     textAlign(CENTER);
-    text("< Player's Turn", width / 2, height * 0.7)
     
+    if (ue.specialAttackCharge === ue.maxSpecialAttackCharge || ue.specialAttackChargePhase2 === ue.maxSpecialAttackChargePhase2 ){
+      fill(254, 190, 0);
+      text("< Player's Turn (Foe is Using Strong Attack !)", width / 2, height * 0.7)
+    } else {
+      fill(211);
+      text("< Player's Turn", width / 2, height * 0.7)
+    }
+
+    fill(211);
+    text("Turn " +turnPassed, width / 2, height * 0.7 + 24);
     
     // Attack Command
     
     AtkButton.removeAttribute('disabled');
     AtkButton.style('background-image', 'url(Assets/Button/Attack-Button.png');
 
-    AtkButton.mousePressed(() => { ue, damageDisplayText = cecilia.attack1(ue); isPlayerTurn = false; cecilia.overDriveCheckReset(); playerHitEffect.show(width/2,0); isAtkMouseOver = false;});
+    AtkButton.mousePressed(() => { ue, damageDisplayText = cecilia.attack1(ue); cecilia.overDriveCheckReset(); playerHitEffect.show(width/2,0); isAtkMouseOver = false; cecilia.isAlreadyAction = true;});
     cecilia.update();
 
     AtkButton.mouseOver(()=> {isAtkMouseOver = true; });
@@ -334,7 +384,7 @@ function drawGamePlayScreen() {
 
     // Switch Command
     
-    SkillButton.mousePressed(() => {cecilia.isAssaultMode = !cecilia.isAssaultMode; cecilia.assaultMode(); isSkillMouseOver = false;});
+    SkillButton.mousePressed(() => {cecilia.isAssaultMode = !cecilia.isAssaultMode; cecilia.assaultMode(); isSkillMouseOver = false; cecilia.isSwitching = true;});
     cecilia.update();
     
     if (cecilia.isAssaultMode && cecilia.mp < cecilia.assaultModeAttackMpCost) {
@@ -366,7 +416,7 @@ function drawGamePlayScreen() {
     //Overdrive Command
     
     if (!cecilia.isOverDrive) {
-      SpButton.mousePressed(() => {cecilia.isOverDrive = true; cecilia.overDrive(); cecilia.overDriveCheckActivate(); cecilia.isAssaultMode = false; isOverDriveButtonMouseOver = false;});
+      SpButton.mousePressed(() => {cecilia.isOverDrive = true; cecilia.overDrive(); cecilia.overDriveCheckActivate(); cecilia.isAssaultMode = false; isOverDriveButtonMouseOver = false; cecilia.isSwitching = true;});
       cecilia.update();
     }
     
@@ -398,7 +448,7 @@ function drawGamePlayScreen() {
     }
 
     //Sp Attack Command
-    SpAttackButton.mousePressed(() => { ue = cecilia.attack2(ue); isPlayerTurn = false; if(cecilia.isOverDrive) {cecilia.overDriveCheckReset();}; isSpAtkMouseOver = false; });
+    SpAttackButton.mousePressed(() => { ue = cecilia.attack2(ue); cecilia.isAlreadyAction = true; if(cecilia.isOverDrive) {cecilia.overDriveCheckReset();}; isSpAtkMouseOver = false; cecilia.isChargeAttacking = true;});
     cecilia.update();
 
     
@@ -419,23 +469,47 @@ function drawGamePlayScreen() {
       hideSpecialAttackDescription(); 
     }
 
-  
+    if (cecilia.isAlreadyAction) {
+      playerActioDelay ++;
+
+    }
+
+    if (playerActioDelay == 100) {
+      isPlayerTurn = false;
+      cecilia.damageDealt = cecilia.minDamageDealt
+      cecilia.isAttacking = false;
+      cecilia.isSwitching = false;
+      cecilia.isChargeAttacking = false;
+
+    }
+
     if (cecilia.hp <= cecilia.maxhp * 0.3) {
       cecilia.isHeavyDamaged = true; 
       } else {
         cecilia.isHeavyDamaged = false;
       }
 
+      // console.log(playerActioDelay);
+      // console.log(cecilia.isAlreadyAction);
+      // console.log(playerActioDelay);
+      console.log(cecilia.damageDealt);
+
+
   }
 
 
-  if (!isPlayerTurn) {
+  if (!isPlayerTurn && ue.isDeath === false) {
 
+    cecilia.isAlreadyAction = false;
+    playerActioDelay = 0;
     actionDelay ++;
 
     textAlign(CENTER);
+    fill(203, 195, 227)
     text("Enemy's Turn >", width / 2, height * 0.7)
-
+    fill(211);
+    text("Turn " +turnPassed, width / 2, height * 0.7 + 24);
+    
     //disable buttom in enemy's turn
     AtkButton.attribute("disabled", true);
     SkillButton.attribute("disabled", true);
@@ -443,16 +517,20 @@ function drawGamePlayScreen() {
     SpAttackButton.attribute("disabled", true);
 
     if (actionDelay == 50 && ue.hp > ue.maxhp * 0.5 ) {
-      ue.attack1(cecilia); cecilia.isAttacked = true; }
+      ue.attack1(cecilia);}
   
-      if (actionDelay == 50 && ue.hp < ue.maxhp * 0.5) {
-        ue.attack2(cecilia);cecilia.isAttacked = true; }
+      if (actionDelay == 50 && ue.hp <= ue.maxhp * 0.5) {
+        ue.attack2(cecilia);}
 
-        if (actionDelay == 70 && ue.hp < ue.maxhp * 0.3 ) {
+        if (actionDelay == 150) {
+          ue.isAttacking = false; ue.isCasting = false;
+        }
+
+        if (actionDelay == 200 && ue.hp < ue.maxhp * 0.3 ) {
           ue.summonEye(); }
       
-    if (actionDelay == 100) {
-        isPlayerTurn = true;}
+    if (actionDelay == 300) {
+        isPlayerTurn = true; ue.isSummoning = false; turnPassed +=1;}
       }
 
 }

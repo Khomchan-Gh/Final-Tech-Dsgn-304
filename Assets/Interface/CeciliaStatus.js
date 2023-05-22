@@ -19,11 +19,20 @@ function statusHp(){
   textSize(16);
   fill(211);
   textFont(novecentoNormal);
-  text('HP: '+cecilia.hp,width * 0.03 ,height * 0.91-8);
-  
+  if (cecilia.hp <= cecilia.minhp){
+    text('Cecilia fell unconscious..', width * 0.03 ,height * 0.91-8);
+  } else {
+    text('HP: '+cecilia.hp,width * 0.03 ,height * 0.91-8);
+  }
   //max hp bar
       
   stroke(255);
+  
+
+  if (cecilia.hp < cecilia.maxhp * 0.3){
+  stroke(220,20,60);
+  }
+  
   fill(60);
   rectMode(LEFT);
   rect(width * 0.03, height * 0.91, cecilia.maxHpBarWidth, cecilia.maxHpBarHeight);
@@ -123,14 +132,14 @@ function statusSpAttackGauge(){
   // fill(255);
   // //text('C.A. : '+cecilia.gauge, 150, 400);
 
-  //max mp bar
+  //max gauge
       
   stroke(211);
   noFill();
   rectMode(LEFT);
   rect(width * 0.716, height * 0.84, cecilia.maxSpAtkBarWidth, cecilia.maxSpAtkBarHeight);
 
-  //current mp bar
+  //current gauge
   noStroke();
   rectMode(CORNER);
   let x = width * 0.717 ;

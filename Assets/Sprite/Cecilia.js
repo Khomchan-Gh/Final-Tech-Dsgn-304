@@ -13,15 +13,8 @@ class Cecilia {
     this.hpBarHeight = 6;
     
     this.maxhp = 500
-    this.hp = 500
+    this.hp = 10
     this.minhp = 0
-
-    //prevent the values to exceed min/max
-    if (this.hp < this.minhp) {
-      this.hp = this.minhp;
-    } else if (this.hp > this.maxhp) {
-      this.hp = this.maxhp;
-    }
 
     //Mp bar value
     this.maxMpBarWidth = 200;
@@ -31,14 +24,7 @@ class Cecilia {
 
     this.maxmp = 300
     this.mp = 300
-    this.minmp = 300
-
-    //prevent the values to exceed min/max
-    if (this.mp < this.minmp) {
-      this.mp = this.minmp;
-    } else if (this.mp > this.maxmp) {
-      this.mp = this.maxmp;
-    }
+    this.minmp = 0
 
     //Sp bar value
     this.maxSpBarWidth = 200;
@@ -47,15 +33,8 @@ class Cecilia {
     this.spBarHeight = 2;
 
     this.maxsp = 100
-    this.sp = 0
+    this.sp = 100
     this.minsp = 0
-
-    //prevent the values to exceed min/max
-    if (this.sp < this.minsp) {
-      this.sp = this.minsp;
-    } else if (this.sp > this.maxsp) {
-      this.sp = this.maxsp;
-    }
 
     //Sp Atk bar value
     this.maxSpAtkBarWidth = 50;
@@ -64,15 +43,8 @@ class Cecilia {
     this.gaugeBarHeight = 2;
 
     this.maxgauge = 100
-    this.gauge = 0
+    this.gauge = 100
     this.mingauge = 0
-
-    //prevent the values to exceed min/max
-    if (this.gauge  < this.mingauge ) {
-      this.gauge  = this.mingauge ;
-    } else if (this.gauge > this.maxgauge ) {
-      this.gauge  = this.maxgauge ;
-    }
 
     //Damage values
     this.maxNormalAttackDMG = 62
@@ -95,11 +67,13 @@ class Cecilia {
     this.isAttacked = false;
     this.isHeavyDamaged = false;
 
-    this.Death = false;
+    this.isDeath = false;
     this.isImmune = false;
 
+    this.isAlreadyAction = false;
     this.isAttacking = false;
     this.isSwitching = false;
+    this.isChargeAttacking = false;
     
     //Assault mode cost
 
@@ -155,7 +129,8 @@ class Cecilia {
     let attackPower = Math.floor(Math.random() * (this.maxNormalAttackDMG  - this.minNormalAttackDMG  + 1)) + this.minNormalAttackDMG ;
     let critChance = Math.random(); // generate a random number between 0 and 1
     let critMultiplier = 1; // default multiplier is 1
-        
+    this.isAttacking = true;
+
     // Check if the attack is a critical hit
     if (critChance <= 0.2 && attackPower >= this.minNormalAttackDMG && attackPower <= this.maxNormalAttackDMG) {
       critMultiplier = 1.5;
@@ -292,8 +267,10 @@ attack2(ue){
     //assault charge attack
     if (this.isAssaultMode) {
       attackPower = Math.floor(Math.random() * (651 - 490 + 1)) + 490;
-      this.mp -= this.assaultModeAttackMpCost;
       cecilia.assaultModeTurnCount();
+      if (ue.specialAttackCharge >= ue.minSpecialspecialAttack || ue.specialAttackChargePhase2 >= ue.minSpecialspecialAttackPhase2 ){
+        ue.specialAttackCharge -=1 ;
+      }
 
       // Set the crit chance and multiplier for assault mode
       critChance = Math.random(); // generate a random number between 0 and 1
@@ -317,8 +294,6 @@ attack2(ue){
     //overdrive charge attack
     if (this.isOverDrive) {
       attackPower = Math.floor(Math.random() * (1860 - 1400 + 1)) + 1400;
-      this.sp -= this.overDriveAttackCost;
-      this.overDriveAttackCost += 5;
 
       this.isImmune = true;
       
@@ -390,19 +365,23 @@ attack2(ue){
   startOver(){
     this.hp = this.maxhp
     this.mp = this.maxmp
-    this.sp = this.maxsp
+    this.sp = this.minsp
     this.gauge = this.mingauge
     this.overDriveAttackCost = this.overDriveMinAttackCost;
     this.assaultActiveTurn = this.assaultStartTurn;
   
     this.isHeavyDamaged = false;
     this.isAttacked = false;
+    this.isDeath =false;
+    this.isImmune = false;
 
     this.isAttacking = false;
+    this.isChargeAttacking = false;
     this.isSwitching = false;
     this.isAssaultMode = false;
     this.isOverDrive = false;
     this.isOverLoaded = false;
+
   }
 
   overLoaded(){
@@ -411,4 +390,42 @@ attack2(ue){
     return(ue);
   }
 
+  isDead(){
+    this.isDeath = true;
+    this.mp = this.minmp;
+    this.sp = this.minsp;
+    this.gauge = this.mingauge;
+  }
+
+  preventExceedStatus(){
+
+    //prevent the values to exceed min/max
+    if (this.hp < this.minhp) {
+      this.hp = this.minhp;
+    } else if (this.hp > this.maxhp) {
+      this.hp = this.maxhp;
+    }
+
+    //prevent the values to exceed min/max
+    if (this.mp < this.minmp) {
+      this.mp = this.minmp;
+    } else if (this.mp > this.maxmp) {
+      this.mp = this.maxmp;
+    }
+
+    //prevent the values to exceed min/max
+    if (this.sp < this.minsp) {
+      this.sp = this.minsp;
+    } else if (this.sp > this.maxsp) {
+      this.sp = this.maxsp;
+    }
+
+    //prevent the values to exceed min/max
+    if (this.gauge  < this.mingauge ) {
+      this.gauge  = this.mingauge ;
+    } else if (this.gauge > this.maxgauge ) {
+      this.gauge  = this.maxgauge ;
+    }
+
+  }
 }

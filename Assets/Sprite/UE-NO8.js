@@ -4,13 +4,11 @@ class UE {
     
       this.x = this.x
       this.y = this.y
-      this.maxhp = 15000
-      this.hp = 15000
       this.ue8 = uE
 
       //Hp bar value
       this.maxhp = 15000
-      this.hp = 15000
+      this.hp = 9000
 
       this.maxHpBarWidth = 400;
       this.maxHpBarHeight = 14;
@@ -22,37 +20,67 @@ class UE {
       this.maxSpecialAttackChargePhase2 = 3
 
       this.specialAttackCharge = 0
+      this.specialAttackChargePhase2 = 0
       this.minSpecialAttackCharge = 0
 
       this.specialAttackAction = this.specialAttackAction;
+      this.specialAttackActionPhase2 = this.specialAttackActionPhase2;
 
       //damage values
-      this.maxNormalAttackDMG = 13
-      this.minNormalAttackDMG = 22
+      this.maxNormalAttackDMG = 22
+      this.minNormalAttackDMG = 13
 
-      this.maxNormalAttackDMGPhase2 = 22
-      this.minNormalAttackDMGPhase2 = 48
+      this.maxNormalAttackDMGPhase2 = 48
+      this.minNormalAttackDMGPhase2 = 24
 
       this.damage = this.damage;
+      this.defaultDamage = 0;
 
+       //Character Status & Animation
+      this.isAttacked = false;
+      this.isHeavyDamaged = false;
+
+      this.isDeath = false;
+      this.isImmune = false;
+
+      this.isAttacking = false;
+      this.isCasting = false;
+      this.isSummoning = false;
       
     }
     
       show(){
       
+      //character sprite
+
       image(this.ue8,width-525,-25, width*0.32, height*0.82)
       let currentHpBarWidth = map(this.hp, 0, this.maxhp, 0, this.hpBarWidth);
   
       //name
       textAlign(CENTER);
       fill(211);
+
+      if (this.specialAttackCharge === this.maxSpecialAttackCharge || this.specialAttackChargePhase2 === this.maxSpecialAttackChargePhase2 ){
+        fill(254, 190, 0);
+      }
+
+      if (this.isDeath === true) {
+        fill(10);
+      }
+
       textFont(novecentoNormal);
       textSize(18);
-      text('# VIII (Devourer of Eternity)',width/2, height * 0.05);
+      text('# VIII (Abyssal Devourer)',width/2, height * 0.05);
       
       //max hp bar
       
       stroke(255);
+      
+      //when max charge is full, health bar color change for player
+      if (this.specialAttackCharge === this.maxSpecialAttackCharge || this.specialAttackChargePhase2 === this.maxSpecialAttackChargePhase2 ){
+        stroke(254, 190, 0);
+      }
+
       fill(60);
       rectMode(CENTER);
       rect(width / 2, height * 0.08, this.maxHpBarWidth, this.maxHpBarHeight);
@@ -76,6 +104,8 @@ class UE {
 
       } else {
         this.damage = Math.round(Math.random() * (this.maxNormalAttackDMG  - this.minNormalAttackDMG  + 1)) + this.minNormalAttackDMG ;
+        cecilia.isAttacked = true;
+        this.isAttacking = true;
 
       }
 
@@ -87,18 +117,24 @@ class UE {
 
       if (this.specialAttackCharge === this.maxSpecialAttackCharge + 1) {
         this.specialAttackAction = Math.floor(Math.random() * 3) + 1;
+        this.isAttacking = false;
 
         if(this.specialAttackAction === 1) {
           cecilia.hp = Math.floor(cecilia.hp - (this.damage * 2));
+          cecilia.isAttacked = true;
+          this.isCasting = true;
         }
 
         if(this.specialAttackAction === 2) {
           cecilia.mp = cecilia.mp - 90;
+          this.isCasting = true;
         }
 
         if(this.specialAttackAction === 3) {
           cecilia.sp = cecilia.sp - 20;
           cecilia.gauge = cecilia.gauge - 20;
+          this.isCasting = true;
+          this.isAttacking = false;
         }
       
         this.specialAttackCharge = this.minSpecialAttackCharge;
@@ -109,12 +145,6 @@ class UE {
       
     }
 
-    chargeSpecialAttack(){
-      
-      this.specialAttackCharge += 1;
-
-    }
-
     attack2(cecilia){
 
       if (cecilia.isImmune) {
@@ -122,26 +152,32 @@ class UE {
 
       } else {
         this.damage = Math.round(Math.random() * (this.maxNormalAttackDMGPhase2 - this.minNormalAttackDMGPhase2  + 1)) + this.minNormalAttackDMGPhase2 ;
+        cecilia.isAttacked = true;
 
       }
 
-      this.specialAttackCharge += 1;
+      this.specialAttackChargePhase2 += 1;
       
       if(this.specialAttackCharge < this.maxSpecialAttackCharge + 1) {
         cecilia.hp = cecilia.hp - this.damage;
+        this.isAttacking = true;
       }
 
-      if (this.specialAttackCharge === this.maxSpecialAttackChargePhase2 + 1) {
-        this.specialAttackAction = Math.floor(Math.random() * 2) + 1;
+      if (this.specialAttackChargePhase2 === this.maxSpecialAttackChargePhase2 + 1) {
+        this.specialAttackActionPhase2 = Math.floor(Math.random() * 2) + 1;
+        this.isAttacking = false;
 
-        if(this.specialAttackAction === 1) {
+        if(this.specialAttackActionPhase2 === 1) {
           cecilia.hp = Math.floor(cecilia.hp - (this.damage * 2.5));
+          cecilia.isAttacked = true;
+          this.isCasting = true;
         }
 
-        if(this.specialAttackAction === 2) {
+        if(this.specialAttackActionPhase2 === 2) {
           cecilia.mp = cecilia.mp - 120;
           cecilia.sp = cecilia.sp - 30;
           cecilia.gauge = cecilia.gauge - 30;
+          this.isCasting = true;
         }
 
         this.specialAttackCharge = this.minSpecialAttackCharge;
@@ -153,8 +189,13 @@ class UE {
     }
     
     summonEye (){
+      this.isSummoning = true;
       eyeCount += 1;
 
+    }
+    
+    isDead(){
+      this.isDeath = true;
     }
 
   }
