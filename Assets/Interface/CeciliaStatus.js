@@ -34,7 +34,7 @@ function statusHp(){
   let x = width * 0.032 ;
   let y = height * 0.913 ;
   for (let n = 0; n < currentHpBarWidth; n++){
-    if (cecilia.hp >= cecilia.maxhp * 0.3){
+    if (cecilia.hp > cecilia.maxhp * 0.3){
     fill(211);
     rect(x + n, y, 2, cecilia.hpBarHeight);
     } else {

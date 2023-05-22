@@ -16,6 +16,13 @@ class Cecilia {
     this.hp = 500
     this.minhp = 0
 
+    //prevent the values to exceed min/max
+    if (this.hp < this.minhp) {
+      this.hp = this.minhp;
+    } else if (this.hp > this.maxhp) {
+      this.hp = this.maxhp;
+    }
+
     //Mp bar value
     this.maxMpBarWidth = 200;
     this.maxMpBarHeight = 6;
@@ -26,6 +33,13 @@ class Cecilia {
     this.mp = 300
     this.minmp = 300
 
+    //prevent the values to exceed min/max
+    if (this.mp < this.minmp) {
+      this.mp = this.minmp;
+    } else if (this.mp > this.maxmp) {
+      this.mp = this.maxmp;
+    }
+
     //Sp bar value
     this.maxSpBarWidth = 200;
     this.maxSpBarHeight = 6;
@@ -33,8 +47,15 @@ class Cecilia {
     this.spBarHeight = 2;
 
     this.maxsp = 100
-    this.sp = 100
+    this.sp = 0
     this.minsp = 0
+
+    //prevent the values to exceed min/max
+    if (this.sp < this.minsp) {
+      this.sp = this.minsp;
+    } else if (this.sp > this.maxsp) {
+      this.sp = this.maxsp;
+    }
 
     //Sp Atk bar value
     this.maxSpAtkBarWidth = 50;
@@ -46,6 +67,14 @@ class Cecilia {
     this.gauge = 0
     this.mingauge = 0
 
+    //prevent the values to exceed min/max
+    if (this.gauge  < this.mingauge ) {
+      this.gauge  = this.mingauge ;
+    } else if (this.gauge > this.maxgauge ) {
+      this.gauge  = this.maxgauge ;
+    }
+
+    //Damage values
     this.maxNormalAttackDMG = 62
     this.minNormalAttackDMG = 47
 
@@ -65,7 +94,9 @@ class Cecilia {
     //Character Status & Animation
     this.isAttacked = false;
     this.isHeavyDamaged = false;
+
     this.Death = false;
+    this.isImmune = false;
 
     this.isAttacking = false;
     this.isSwitching = false;
@@ -83,6 +114,7 @@ class Cecilia {
 
     //Overdrive cost
     this.overDriveActivateCost = 10;
+    this.overDriveMinActivateCost = 50;
     this.overDriveMinAttackCost = 1;
     this.overDriveAttackCost = 1;
 
@@ -100,6 +132,7 @@ class Cecilia {
 
     //Damage calc & display
     this.damageDealt = this.damageDealt;
+    this.minDamageDealt = 0;
 
 
     // this.attackStartTime = 0;
@@ -211,6 +244,7 @@ class Cecilia {
     this.damageDealt = Math.floor(attackPower * critMultiplier); // calculate the damage
       
     ue.hp -= this.damageDealt; // subtract damage from enemy's HP
+    this.isImmune = false;
     return ue; // return the updated enemy object
     
 }
@@ -285,6 +319,8 @@ attack2(ue){
       attackPower = Math.floor(Math.random() * (1860 - 1400 + 1)) + 1400;
       this.sp -= this.overDriveAttackCost;
       this.overDriveAttackCost += 5;
+
+      this.isImmune = true;
       
       // Set the crit chance and multiplier for overdrive mode
       critChance = 1; // guaranteed critical hit
@@ -359,6 +395,9 @@ attack2(ue){
     this.overDriveAttackCost = this.overDriveMinAttackCost;
     this.assaultActiveTurn = this.assaultStartTurn;
   
+    this.isHeavyDamaged = false;
+    this.isAttacked = false;
+
     this.isAttacking = false;
     this.isSwitching = false;
     this.isAssaultMode = false;
@@ -368,7 +407,8 @@ attack2(ue){
 
   overLoaded(){
     this.isOverLoaded = true;
-    this.hp -= 100;
+
+    return(ue);
   }
 
 }

@@ -28,6 +28,8 @@ let eyeMinCount = 0;
 let eyeCount = 0;
 let eyeMaxCount = 7;
 
+let gameIsCleared = false;
+
 function preload() {
 
   //load empty image
@@ -65,7 +67,9 @@ function preload() {
   ceciliaOverDrive = loadImage('Assets/Characters/Cecilia-OverDrive.png');
   ceciliaSkill = loadImage('Assets/Characters/Cecilia-Stance2.png');
   ceciliaProtrait = loadImage('Assets/Image/Cecilia.png');
+  ceciliaDamagedProtrait = loadImage('Assets/Image/Cecilia-Damaged.png');
   ceciliaProtraitOverDrive = loadImage('Assets/Image/Cecilia-Portrait-OverDrive.png');
+  ceciliaDamagedProtraitOverDrive = loadImage('Assets/Image/OverDrive-Cecilia-Damaged.png');
 
   //load player's hit effect
   ceciliaNormalHit1 = loadImage('Assets/Hit-Effect/Normal-Attack-1.png');
@@ -131,7 +135,8 @@ function draw() {
   if (currentScreen === "gameplay") {
     drawGamePlayScreen();
     damageDone();
-    
+    calledAction();
+
   }
   
   if (currentScreen === "ending_1") {
@@ -285,13 +290,10 @@ function drawGamePlayScreen() {
 
       if (cecilia.hp <= 0) {
           currentScreen = "game_over";
-        
+
       } else {
-        fadeOutScreen(() => {
           currentScreen = "ending_1";
-          fadeInScreen();
-        });
-         
+          
       }
 
       
@@ -300,21 +302,17 @@ function drawGamePlayScreen() {
   
   if (eyeCount > eyeMaxCount) {
       currentScreen = "ending_2";
-
-    //reset character values for a new game 
-    isPlayerTurn = true;
-    cecilia.startOver();
-    ue.hp = ue.maxhp;
-    eyeCount = eyeMinCount
    
   }
     
     if (isPlayerTurn) {
 
     actionDelay = 0;
+    cecilia.isAttacked = false;
+    cecilia.damageDealt = cecilia.minDamageDealt
 
     textAlign(CENTER);
-    text("Player's Turn", width/2, height * 0.13)
+    text("< Player's Turn", width / 2, height * 0.7)
     
     
     // Attack Command
@@ -382,7 +380,7 @@ function drawGamePlayScreen() {
       cecilia.overLoaded();
     }
 
-    if (cecilia.isAssaultMode || cecilia.sp < cecilia.overDriveActivateCost || cecilia.isChangedToOverDrive === true || cecilia.isOverLoaded) {
+    if (cecilia.isAssaultMode || cecilia.sp < cecilia.overDriveMinActivateCost || cecilia.isChangedToOverDrive === true || cecilia.isOverLoaded) {
       SpButton.attribute('disabled', 'true');
       SpButton.style('background-image', 'url(Assets/Button/Overdrive-Button-Disable.png');
     } else {
@@ -421,8 +419,13 @@ function drawGamePlayScreen() {
       hideSpecialAttackDescription(); 
     }
 
+  
+    if (cecilia.hp <= cecilia.maxhp * 0.3) {
+      cecilia.isHeavyDamaged = true; 
+      } else {
+        cecilia.isHeavyDamaged = false;
+      }
 
-    console.log(playerHitEffect);
   }
 
 
@@ -431,7 +434,7 @@ function drawGamePlayScreen() {
     actionDelay ++;
 
     textAlign(CENTER);
-    text("Enemy's Turn", width/2, height * 0.13)
+    text("Enemy's Turn >", width / 2, height * 0.7)
 
     //disable buttom in enemy's turn
     AtkButton.attribute("disabled", true);
@@ -439,11 +442,14 @@ function drawGamePlayScreen() {
     SpButton.attribute("disabled", true);
     SpAttackButton.attribute("disabled", true);
 
-    if (actionDelay == 50) {
-      ue.attack1(cecilia);}
+    if (actionDelay == 50 && ue.hp > ue.maxhp * 0.5 ) {
+      ue.attack1(cecilia); cecilia.isAttacked = true; }
   
-      if (actionDelay == 50 && ue.hp <= ue.maxhp/2 ) {
-        ue.attack2(cecilia);}
+      if (actionDelay == 50 && ue.hp < ue.maxhp * 0.5) {
+        ue.attack2(cecilia);cecilia.isAttacked = true; }
+
+        if (actionDelay == 70 && ue.hp < ue.maxhp * 0.3 ) {
+          ue.summonEye(); }
       
     if (actionDelay == 100) {
         isPlayerTurn = true;}

@@ -18,9 +18,22 @@ class UE {
       this.hpBarHeight = 10;
       
       //Special attack
-      this.maxSpecialAttackCharge = this.maxSpecialAttackCharge
+      this.maxSpecialAttackCharge = 5
+      this.maxSpecialAttackChargePhase2 = 3
+
       this.specialAttackCharge = 0
       this.minSpecialAttackCharge = 0
+
+      this.specialAttackAction = this.specialAttackAction;
+
+      //damage values
+      this.maxNormalAttackDMG = 13
+      this.minNormalAttackDMG = 22
+
+      this.maxNormalAttackDMGPhase2 = 22
+      this.minNormalAttackDMGPhase2 = 48
+
+      this.damage = this.damage;
 
       
     }
@@ -58,9 +71,40 @@ class UE {
 
     attack1(cecilia){
       
-      //แก้เลขทีหลัง
-      cecilia.hp = cecilia.hp - 20;
-    
+      if (cecilia.isImmune) {
+        this.damage = 0;
+
+      } else {
+        this.damage = Math.round(Math.random() * (this.maxNormalAttackDMG  - this.minNormalAttackDMG  + 1)) + this.minNormalAttackDMG ;
+
+      }
+
+      this.specialAttackCharge += 1;
+      
+      if(this.specialAttackCharge < this.maxSpecialAttackCharge + 1) {
+        cecilia.hp = cecilia.hp - this.damage;
+      }
+
+      if (this.specialAttackCharge === this.maxSpecialAttackCharge + 1) {
+        this.specialAttackAction = Math.floor(Math.random() * 3) + 1;
+
+        if(this.specialAttackAction === 1) {
+          cecilia.hp = Math.floor(cecilia.hp - (this.damage * 2));
+        }
+
+        if(this.specialAttackAction === 2) {
+          cecilia.mp = cecilia.mp - 90;
+        }
+
+        if(this.specialAttackAction === 3) {
+          cecilia.sp = cecilia.sp - 20;
+          cecilia.gauge = cecilia.gauge - 20;
+        }
+      
+        this.specialAttackCharge = this.minSpecialAttackCharge;
+
+      }
+
       return cecilia;
       
     }
@@ -72,16 +116,50 @@ class UE {
     }
 
     attack2(cecilia){
+
+      if (cecilia.isImmune) {
+        this.damage = 0;
+
+      } else {
+        this.damage = Math.round(Math.random() * (this.maxNormalAttackDMGPhase2 - this.minNormalAttackDMGPhase2  + 1)) + this.minNormalAttackDMGPhase2 ;
+
+      }
+
+      this.specialAttackCharge += 1;
       
-      //แก้เลขทีหลัง
-      cecilia.hp = cecilia.hp - 40;
-      eyeCount += 1;
+      if(this.specialAttackCharge < this.maxSpecialAttackCharge + 1) {
+        cecilia.hp = cecilia.hp - this.damage;
+      }
+
+      if (this.specialAttackCharge === this.maxSpecialAttackChargePhase2 + 1) {
+        this.specialAttackAction = Math.floor(Math.random() * 2) + 1;
+
+        if(this.specialAttackAction === 1) {
+          cecilia.hp = Math.floor(cecilia.hp - (this.damage * 2.5));
+        }
+
+        if(this.specialAttackAction === 2) {
+          cecilia.mp = cecilia.mp - 120;
+          cecilia.sp = cecilia.sp - 30;
+          cecilia.gauge = cecilia.gauge - 30;
+        }
+
+        this.specialAttackCharge = this.minSpecialAttackCharge;
+
+      }
 
       return cecilia;
       
     }
     
+    summonEye (){
+      eyeCount += 1;
+
+    }
+
   }
+
+ 
 
   class EyePortal {
     constructor(){

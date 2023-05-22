@@ -7,7 +7,7 @@ function ending2() {
   
     textAlign(CENTER);
     fill(211);
-    text("Ending#1",width/2,height/2)
+    text("Ending#2",width/2,height/2)
     
       //reset character values for a new game 
       isPlayerTurn = true;

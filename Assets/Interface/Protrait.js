@@ -1,11 +1,31 @@
 function ceciliaDefaultPortrait(){
-  
+
+  if (!cecilia.isAttacked) {
     image(ceciliaProtrait,-250,400,708,1002);
-    // ceciliaProtrait.resize(708,1002);
+    } else { 
+      image(ceciliaDamagedProtrait,-250,400,708,1002);
+    }
+
+  if (cecilia.isHeavyDamaged) {
+    image(ceciliaDamagedProtrait,-250,400,708,1002);
+    } else if (!cecilia.isHeavyDamaged) { 
+      image(ceciliaProtrait,-250,400,708,1002);
+    }
+
   }
 
 function ceciliaOverDrivePortrait(){
-  
+
+  if (!cecilia.isAttacked) {
     image(ceciliaProtraitOverDrive,-200,430,884,956);
-    // ceciliaProtraitOverDrive.resize(884,956);
+    } else {
+      image(ceciliaDamagedProtraitOverDrive,-200,430,884,956);
+    }
+
+  if (cecilia.isHeavyDamaged) {
+    image(ceciliaDamagedProtraitOverDrive,-200,430,884,956);
+    } else if (!cecilia.isHeavyDamaged) {
+      image(ceciliaProtraitOverDrive,-200,430,884,956);
+    }
+  
   }
