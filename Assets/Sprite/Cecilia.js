@@ -344,6 +344,7 @@ attack2(ue){
   overDrive(){
     this.isOverDrive = true;
     this.sp -= this.overDriveActivateCost;
+    
 }
 
   overDriveCheckReset(){
