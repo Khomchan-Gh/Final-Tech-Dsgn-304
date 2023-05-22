@@ -437,7 +437,7 @@ function drawGamePlayScreen() {
       cecilia.overLoaded();
     }
 
-    if (cecilia.isAssaultMode || cecilia.sp < cecilia.overDriveMinActivateCost || cecilia.isChangedToOverDrive === true || cecilia.isOverLoaded) {
+    if (cecilia.isAssaultMode || !cecilia.isOverDrive && cecilia.sp < cecilia.overDriveMinActivateCost || cecilia.isChangedToOverDrive === true || cecilia.isOverLoaded) {
       SpButton.attribute('disabled', 'true');
       SpButton.style('background-image', 'url(Assets/Button/Overdrive-Button-Disable.png');
     } else {

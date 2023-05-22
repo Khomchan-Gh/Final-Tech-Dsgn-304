@@ -156,6 +156,7 @@ class UE {
 
       }
 
+      this.specialAttackCharge = this.minSpecialAttackCharge;
       this.specialAttackChargePhase2 += 1;
       
       if(this.specialAttackCharge < this.maxSpecialAttackCharge + 1) {
