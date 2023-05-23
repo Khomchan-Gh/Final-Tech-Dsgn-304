@@ -13,7 +13,7 @@ class Cecilia {
     this.hpBarHeight = 6;
     
     this.maxhp = 500
-    this.hp = 1
+    this.hp = 500
     this.minhp = 0
 
     //Mp bar value
