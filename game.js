@@ -119,7 +119,7 @@ function setup() {
   if (/Mobi|Android/i.test(navigator.userAgent)) {
     textAlign(CENTER)
     text("The game is currently not available on Smartphone", width * 0.5, height * 0.5);
-    
+
   } else {
     
   createCanvas(1280, 720);
