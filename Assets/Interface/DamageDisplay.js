@@ -1,10 +1,9 @@
-// cecilia = new Cecilia() ;
 let playerAttackName = ["", "Quick Slash", "MemoryBlade", "Memory Blade EX"];
 let playerSpecialAttackName = ["", "Energized Thrust", "Memory Burst", "Memory Burst EX"];
 let playerSkillName = ["", "Memory Discharge", "Memory Overflow"];
 
 let enemyAttackName = ["", "Void Fragment", "Abyssal Ripper"];
-let enemySkillName = ["", "Claw of the Void", "Energy Drain", "Memory Devour", "Destruction Ray", "Mind Breaker", "Eye of the Darkness Abyssal"];
+let enemySkillName = ["", "Claw of the Void", "Energy Drain", "Memory Devour", "Destruction Ray", "Mind Breaker", "Eye of the Abyssal Darkness"];
 
 let baseHeight = 1080;
 let actionNameHeight = baseHeight * 0.1;
@@ -100,16 +99,16 @@ function calledAction() {
 
         if(ue.isCasting && ue.specialAttackAction === 1) {
             text("< " + enemySkillName[1] + " >", width * 0.5, actionNameHeight )
-        } else if(ue.isCasting && ue.specialAttackAction === 2) {
+        } else if(ue.isDraining && ue.specialAttackAction === 2) {
             text("< " + enemySkillName[2] + " >", width * 0.5, actionNameHeight )
-        } else if(ue.isCasting && ue.specialAttackAction === 3) {
+        } else if(ue.isDraining && ue.specialAttackAction === 3) {
             text("< " + enemySkillName[3] + " >", width * 0.5, actionNameHeight )
         }
 
         //phase 2 action display
         if(ue.hp <= ue.maxhp * 0.5 && ue.isCasting && ue.specialAttackActionPhase2 === 1) {
             text("< " + enemySkillName[4] + " >", width * 0.5, actionNameHeight )
-        } else if(ue.isCasting && ue.specialAttackActionPhase2 === 2) {
+        } else if(ue.hp <= ue.maxhp * 0.5 && ue.isDraining && ue.specialAttackActionPhase2 === 2) {
             text("< " + enemySkillName[5] + " >", width * 0.5, actionNameHeight )
         }
 

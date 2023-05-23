@@ -1,17 +1,18 @@
-function gameoverscreen() {
+function gameOverScreen() {
 
     background(10)
     cgGameOver.resize(1403,992);
     image(cgGameOver,-61.5,-72,);
 
-    textAlign(CENTER);
-    text("GAME OVER",width/2,height/2);
+    textAlign(LEFT);
+    fill(211);
+    textFont(novecentoBold)
+    textSize(32)
+    text("- Dead -", width * 0.1,height * 0.1)
 
-    //reset character values for a new game 
-    isPlayerTurn = true;
-    cecilia.startOver();
-    ue.hp = ue.maxhp;
-    eyeCount = eyeMinCount;
-    turnPassed = resetTurn;
+    textAlign(CENTER);
+    textFont(novecentoNormal)
+    textSize(12)
+    text("(What a Fragile Creature, Your power was wasted in that flesh. Let me make you mine.)", width * 0.5,height * 0.95);
 
     }

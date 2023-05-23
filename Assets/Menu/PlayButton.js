@@ -53,8 +53,8 @@ function playButton(){
     playButton2.style('left', '20%');
     playButton2.style('top', '60%');
     playButton2.style('transform', 'translate(-50%, -50%)');
-    playButton2.mouseOver(galleryHovered);
-    playButton2.mouseOut(galleryUnHovered);
+    // playButton2.mouseOver(galleryHovered);
+    // playButton2.mouseOut(galleryUnHovered);
     // playButton2.mousePressed(() => {
     //   playButton2.hide();
     //   fadeOutScreen(() => {
@@ -92,8 +92,8 @@ function playButton(){
     playButton3.style('left', '20%');
     playButton3.style('top', '70%');
     playButton3.style('transform', 'translate(-50%, -50%)');
-    playButton3.mouseOver(creditsHovered);
-    playButton3.mouseOut(creditsUnHovered);
+    // playButton3.mouseOver(creditsHovered);
+    // playButton3.mouseOut(creditsUnHovered);
     // playButton3.mousePressed(() => {
     //   playButton3.hide();
     //   fadeOutScreen(() => {

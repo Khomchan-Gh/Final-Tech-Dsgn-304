@@ -4,11 +4,17 @@ class UE {
     
       this.x = this.x
       this.y = this.y
+
+      //Load image
       this.ue8 = uE
+      this.ue8IsOnAction = uEAction
+      this.ue8Phase2 = uE2
+      this.ue8Phase2IsOnAction = uE2Action
+      this.ueIsDead = uEDead
 
       //Hp bar value
       this.maxhp = 15000
-      this.hp = 9000
+      this.hp = 15000
 
       this.maxHpBarWidth = 400;
       this.maxHpBarHeight = 14;
@@ -45,6 +51,7 @@ class UE {
 
       this.isAttacking = false;
       this.isCasting = false;
+      this.isDraining = false;
       this.isSummoning = false;
       
     }
@@ -53,7 +60,14 @@ class UE {
       
       //character sprite
 
-      image(this.ue8,width-525,-25, width*0.32, height*0.82)
+      if(this.hp > this.maxhp * 0.5 && this.isAttacking === false && this.isCasting === false && this.isSummoning === false && this.isDraining === false && this.isDeath === false){
+      image(this.ue8, width-525, -25, width*0.32, height*0.82)
+
+      } else if (this.hp <= this.maxhp * 0.5) {
+        image(this.ue8Phase2, width-525, -25, width*0.32, height*0.82)
+
+      }
+
       let currentHpBarWidth = map(this.hp, 0, this.maxhp, 0, this.hpBarWidth);
   
       //name
@@ -106,10 +120,9 @@ class UE {
         this.damage = Math.round(Math.random() * (this.maxNormalAttackDMG  - this.minNormalAttackDMG  + 1)) + this.minNormalAttackDMG ;
         cecilia.isAttacked = true;
         this.isAttacking = true;
+        this.specialAttackCharge += 1;
 
       }
-
-      this.specialAttackCharge += 1;
       
       if(this.specialAttackCharge < this.maxSpecialAttackCharge + 1) {
         cecilia.hp = cecilia.hp - this.damage;
@@ -127,14 +140,13 @@ class UE {
 
         if(this.specialAttackAction === 2) {
           cecilia.mp = cecilia.mp - 90;
-          this.isCasting = true;
+          this.isDraining = true;
         }
 
         if(this.specialAttackAction === 3) {
           cecilia.sp = cecilia.sp - 20;
           cecilia.gauge = cecilia.gauge - 20;
-          this.isCasting = true;
-          this.isAttacking = false;
+          this.isDraining = true;
         }
       
         this.specialAttackCharge = this.minSpecialAttackCharge;
@@ -153,11 +165,11 @@ class UE {
       } else {
         this.damage = Math.round(Math.random() * (this.maxNormalAttackDMGPhase2 - this.minNormalAttackDMGPhase2  + 1)) + this.minNormalAttackDMGPhase2 ;
         cecilia.isAttacked = true;
+        this.specialAttackCharge = this.minSpecialAttackCharge;
+        this.specialAttackChargePhase2 += 1;
+        this.isAttacking = true;
 
       }
-
-      this.specialAttackCharge = this.minSpecialAttackCharge;
-      this.specialAttackChargePhase2 += 1;
       
       if(this.specialAttackCharge < this.maxSpecialAttackCharge + 1) {
         cecilia.hp = cecilia.hp - this.damage;
@@ -169,7 +181,7 @@ class UE {
         this.isAttacking = false;
 
         if(this.specialAttackActionPhase2 === 1) {
-          cecilia.hp = Math.floor(cecilia.hp - (this.damage * 2.5));
+          cecilia.hp = Math.floor(cecilia.hp - (this.damage * 3));
           cecilia.isAttacked = true;
           this.isCasting = true;
         }
@@ -178,10 +190,10 @@ class UE {
           cecilia.mp = cecilia.mp - 120;
           cecilia.sp = cecilia.sp - 30;
           cecilia.gauge = cecilia.gauge - 30;
-          this.isCasting = true;
+          this.isDraining = true;
         }
 
-        this.specialAttackCharge = this.minSpecialAttackCharge;
+        this.specialAttackChargePhase2 = this.minSpecialAttackCharge;
 
       }
 
@@ -199,6 +211,29 @@ class UE {
       this.isDeath = true;
     }
 
+    update () {
+
+      if(this.hp > this.maxhp * 0.5 && this.specialAttackCharge === this.maxSpecialAttackCharge || this.isDraining && this.hp > this.maxhp * 0.5 || this.isAttacking && this.hp > this.maxhp * 0.5 || this.isCasting && this.hp > this.maxhp * 0.5) {
+        image(this.ue8IsOnAction, width - 525, -25, width * 0.32, height * 0.82)
+      }
+
+      if(this.hp <= this.maxhp * 0.5 && this.specialAttackChargePhase2 === this.maxSpecialAttackChargePhase2){
+        image(this.ue8Phase2IsOnAction, width - 525, -25, width * 0.32, height * 0.82)
+      }
+
+      if(this.isDeath === true){
+        image(this.ueIsDead, width-525, -25, width*0.32, height*0.82)
+      }
+
+    }
+
+    startOver(){
+      this.hp = this.maxhp
+      this.specialAttackCharge = this.minSpecialAttackCharge
+      this.specialAttackCharge = this.minSpecialAttackCharge
+    }
+
+
   }
 
  
@@ -212,6 +247,42 @@ class UE {
 
     show(x,y){
       image(this.eyeportal,x,y,width * 0.3,height * 0.5)
+    }
+
+  }
+
+  class UeHitEffect {
+    constructor(){
+      this.x = this.x
+      this.y = this.y
+      this.direction = this.direction
+
+      //load image
+      this.ueVoidFragment = uEHit1
+      this.ueVoidClaw = uEHit2
+      this.ueRipper = uEHit3
+      this.ueDRay = uESpecialHit
+      this.ueDrain = uESkill
+
+    }
+
+    update(){
+      if(ue.isAttacking && ue.hp > ue.maxhp * 0.5){
+        image(this.ueVoidFragment, 140, 75, width * 0.3,height * 0.5)
+      } else if (ue.isAttacking && ue.hp <= ue.maxhp * 0.5) {
+        image(this.ueRipper, 120, 75, width * 0.4,height * 0.6)
+      }
+
+      if(ue.isCasting && ue.hp > ue.maxhp * 0.5){
+        image(this.ueVoidClaw, 140, 75, width * 0.3,height * 0.5)
+      } else if (ue.isCasting && ue.hp <= ue.maxhp * 0.5) {
+        image(this.ueDRay, -160, height - 900, width * 0.85, height)
+      }
+
+      if(ue.isDraining){
+        image(this.ueDrain, width * 0.35, 75, width * 0.3,height * 0.5)
+      }
+
     }
 
   }

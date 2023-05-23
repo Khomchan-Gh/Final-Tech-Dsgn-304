@@ -1,10 +1,3 @@
-
-// if (Cecilia) {
-
-//   cecilia = new Cecilia();
-
-// }
-
 //Attack button
 
 function attackButton(){

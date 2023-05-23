@@ -13,7 +13,7 @@ class Cecilia {
     this.hpBarHeight = 6;
     
     this.maxhp = 500
-    this.hp = 10
+    this.hp = 1
     this.minhp = 0
 
     //Mp bar value
@@ -33,7 +33,7 @@ class Cecilia {
     this.spBarHeight = 2;
 
     this.maxsp = 100
-    this.sp = 100
+    this.sp = 0
     this.minsp = 0
 
     //Sp Atk bar value
@@ -43,7 +43,7 @@ class Cecilia {
     this.gaugeBarHeight = 2;
 
     this.maxgauge = 100
-    this.gauge = 100
+    this.gauge = 0
     this.mingauge = 0
 
     //Damage values
@@ -59,6 +59,7 @@ class Cecilia {
     //Load sprite
     this.CeciliaStandBy = ceciliaStandby
     this.CeciliaAtk = ceciliaAttack
+    this.CeciliaDead = ceciliaDead
 
     this.CeciliaAssault = ceciliaAssault
     this.CeciliaAssaultAtk = ceciliaAssaultAttack
@@ -80,8 +81,8 @@ class Cecilia {
     
     //Assault mode cost
 
-    this.assaultModeActivateMpCost = 30;
-    this.assaultModeAttackMpCost = 15;
+    this.assaultModeActivateMpCost = 60;
+    this.assaultModeAttackMpCost = 30;
 
     //Assault state check
 
@@ -121,9 +122,9 @@ class Cecilia {
   
     show(){
     
-    if (this.isAttacking === false && this.isSwitching === false && this.isAssaultMode === false && this.isOverDrive === false && this.isChargeAttacking === false && isAtkMouseOver === false && isSpAtkMouseOver === false){
+    if (this.isDeath === false && this.isAttacking === false && this.isSwitching === false && this.isAssaultMode === false && this.isOverDrive === false && this.isChargeAttacking === false && isAtkMouseOver === false && isSpAtkMouseOver === false){
     image(this.CeciliaStandBy,150,75, width*0.35, height*0.6)
-    };
+    }
   
   }
 
@@ -148,13 +149,22 @@ class Cecilia {
         this.assaultActiveTurn = this.assaultStartTurn;
       }
       
-      this.mp += 10
+      this.hp += 15
       if (this.mp > this.maxmp) {
         this.mp = this.maxmp;
       }
-      this.sp += 5
+      this.mp += 30
+      if (this.mp > this.maxmp) {
+        this.mp = this.maxmp;
+      }
+      this.sp += 10
       if (this.sp > this.maxsp) {
         this.sp = this.maxsp;
+      }
+
+      this.gauge += 10
+      if (this.gauge > this.maxgauge) {
+        this.gauge = this.maxgauge;
       }
      
     }
@@ -167,21 +177,23 @@ class Cecilia {
       // Set the crit chance and multiplier for assault mode
       critChance = Math.random(); // generate a random number between 0 and 1
       if (critChance <= 0.5 && attackPower >= this.minAssaultDMG && attackPower <= this.maxAssaultDMG) {
-        critMultiplier = 2.5;
+        critMultiplier = 1.5;
       }
 
-      this.hp += 25
+      this.hp += 35
       if (this.hp > this.maxhp) {
         this.hp = this.maxhp;
       }
-      this.sp += 10
+      this.sp += 25
       if (this.sp > this.maxsp) {
         this.sp = this.maxsp;
       }
-      this.gauge += 10
+
+      this.gauge += 20
       if (this.gauge > this.maxgauge) {
         this.gauge = this.maxgauge;
       }
+
     }
     
     if (this.isOverDrive) {
@@ -194,14 +206,14 @@ class Cecilia {
       
       // Set the crit chance and multiplier for overdrive mode
       critChance = 1; // guaranteed critical hit
-      critMultiplier = 5;
+      critMultiplier = 3;
 
-      this.mp += 25
+      this.mp += 60
       if (this.mp > this.maxmp) {
         this.mp = this.maxmp;
       }
 
-      this.gauge += 20
+      this.gauge += 10
       if (this.gauge > this.maxgauge) {
         this.gauge = this.maxgauge;
       }
@@ -235,7 +247,7 @@ attack2(ue){
   let critMultiplier = 1; // default multiplier is 1
     
   if (critChance <= 0.2 && attackPower >= 235 && attackPower <= 310) {
-      critMultiplier = 1.5;
+      critMultiplier = 2;
     }
 
     if (!this.isAssaultMode) {
@@ -246,7 +258,7 @@ attack2(ue){
         this.assaultActiveTurn = this.assaultStartTurn;
       }
       
-      this.mp += 60
+      this.mp += 180
       if (this.mp > this.maxmp) {
         this.mp = this.maxmp;
       }
@@ -259,7 +271,7 @@ attack2(ue){
         this.hp = this.maxhp;
       }
 
-      this.sp += 30
+      this.sp += 50
       if (this.sp > this.maxsp) {
         this.sp = this.maxsp;
       }
@@ -278,10 +290,10 @@ attack2(ue){
       // Set the crit chance and multiplier for assault mode
       critChance = Math.random(); // generate a random number between 0 and 1
       if (critChance <= 0.5 && attackPower >= 490 && attackPower <= 651) {
-        critMultiplier = 2.5;
+        critMultiplier = 3;
       }
 
-      this.hp += 50
+      this.hp += 250
       if (this.hp > this.maxhp) {
         this.hp = this.maxhp;
       }
@@ -302,20 +314,20 @@ attack2(ue){
       
       // Set the crit chance and multiplier for overdrive mode
       critChance = 1; // guaranteed critical hit
-      critMultiplier = 5;
+      critMultiplier = 4;
 
-      this.mp += 200
+      this.mp += 300
       if (this.mp > this.maxmp) {
         this.mp = this.maxmp;
       }
-      this.hp += 100
-      if (this.hp > this.maxhp) {
-        this.hp = this.maxhp;
-      }
-      this.gauge += 30
-      if (this.gauge > this.maxgaugep) {
-        this.gauge = this.maxgauge;
-      }
+      // this.hp += 100
+      // if (this.hp > this.maxhp) {
+      //   this.hp = this.maxhp;
+      // }
+
+      //remove foe special attack charge
+      ue.specialAttackCharge = ue.minSpecialAttackCharge;
+      ue.specialAttackChargePhase2 = ue.minSpecialAttackCharge;
 
       this.isChangedToOverDrive = false;
       // console.log("Overdrive damage dealt: " + attackPower * critMultiplier);
@@ -325,12 +337,6 @@ attack2(ue){
   ue.hp -= this.damageDealt;
   return ue;
 }
-
-  // attackAnimation(){
-  //   this.isAttacking = true;
-  //   this.attackStartTime = millis();
-
-  // }
 
   assaultMode(){
       this.isAssaultMode = true;
@@ -358,7 +364,7 @@ attack2(ue){
   update() {
 
     
-    if(this.isAttacking && !this.isAssaultMode && !this.isOverDrive || isAtkMouseOver && !this.isAssaultMode && !this.isOverDrive || isSpAtkMouseOver && !this.isAssaultMode && !this.isOverDrive || this.isChargeAttacking && !this.isAssaultMode && !this.isOverDrive) {
+    if(this.isAttacking && !this.isAssaultMode && !this.isOverDrive || isAtkMouseOver && !this.isAssaultMode && !this.isOverDrive || isSpAtkMouseOver && !this.isAssaultMode && !this.isOverDrive) {
       image(this.CeciliaAtk, 150, 75, width*0.35, height*0.6);
     }
 
@@ -372,9 +378,11 @@ attack2(ue){
       image(this.CeciliaOverDriveAtk, 150, 75, width*0.35, height*0.6);
     } else if (this.isOverDrive) {
       image(this.CeciliaOverDrive, 150, 75, width*0.35, height*0.6);
-    }
+    } 
 
-    
+    if(this.isDeath) {
+      image(this.CeciliaDead, 150, 75, width*0.35, height*0.6);
+    }
 
   }
 
@@ -403,7 +411,6 @@ attack2(ue){
   overLoaded(){
     this.isOverLoaded = true;
 
-    return(ue);
   }
 
   isDead(){
@@ -411,6 +418,7 @@ attack2(ue){
     this.mp = this.minmp;
     this.sp = this.minsp;
     this.gauge = this.mingauge;
+
   }
 
   preventExceedStatus(){
@@ -532,4 +540,69 @@ class OverFlowBlade {
 
   }
 
+}
+
+class CeciliaHitEffect {
+  constructor (){
+    this.x = width
+    this.y = height
+    this.NormalChargeAttackSpeed = 700
+
+    //Load Attack Effect
+    this.NormalAttackHit = ceciliaNormalHit1
+    this.NormalAttackHitB = ceciliaNormalHit2
+
+    this.SpecialAttackHit = ceciliaSpecialHit3
+    this.SpecialAttackHitB = ceciliaSpecialHit1
+
+    this.NormalChargeAttackHit = ceciliaSpecialHit2
+    this.AssaultChargeAttackHit =  ceciliaAssaultBurst
+    this.OverDriveChargeAttackHit = ceciliaOverDriveBurst
+
+  }
+
+  update (){
+    
+    //Default hit effect  
+    if(cecilia.isAttacking && !cecilia.isAssaultMode && !cecilia.isOverDrive) {
+
+      image(this.NormalAttackHit, width * 0.5, height * 0.1, width * 0.5, height * 0.5);
+      }
+      
+    if(cecilia.isChargeAttacking && !cecilia.isAssaultMode && !cecilia.isOverDrive) {
+      
+      this.x -= this.NormalChargeAttackSpeed;
+
+      image(this.NormalChargeAttackHit, this.x, height - 800, width * 9, height * 1);
+      }
+
+    //Assault mode hit effect  
+    if(cecilia.isAttacking && cecilia.isAssaultMode) {
+
+      image(this.NormalAttackHit, width * 0.57, height * 0.1, width * 0.3, height * 0.5);
+
+      image(this.NormalAttackHitB, width * 0.37, height * 0.05, width * 0.7, height * 0.6);
+      }
+
+    if(cecilia.isChargeAttacking && cecilia.isAssaultMode) {
+
+        image(this.AssaultChargeAttackHit, width * 0.25, -200, width * 1, height * 1);
+
+      }
+
+    //OverDrive hit effect
+    if(cecilia.isAttacking && cecilia.isOverDrive) {
+
+      image(this.SpecialAttackHitB, width * 0.57, height * 0.1, width * 0.3, height * 0.5);
+
+      image(this.SpecialAttackHit, width * 0.37, height * 0.05, width * 0.7, height * 0.6);
+      }
+
+    if(cecilia.isChargeAttacking && cecilia.isOverDrive) {
+
+        image(this.OverDriveChargeAttackHit, width * 0.4, -200);
+
+      }
+    
+    }
 }

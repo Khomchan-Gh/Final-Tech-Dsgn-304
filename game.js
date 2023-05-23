@@ -68,6 +68,7 @@ function preload() {
   //load player's assets
   ceciliaStandby = loadImage('Assets/Characters/Cecilia-Stance1.png');
   ceciliaAttack = loadImage('Assets/Characters/Cecilia-Attack.png');
+  ceciliaDead = loadImage('Assets/Characters/Cecilia-Sprite-Death.png');
   
   ceciliaAssault = loadImage('Assets/Characters/Cecilia-Assault.png');
   ceciliaAssaultAttack = loadImage('Assets/Characters/Cecilia-Assault-Attack.png');
@@ -93,6 +94,8 @@ function preload() {
   ceciliaSpecialHit1 = loadImage('Assets/Hit-Effect/Special-Attack-1.png');
   ceciliaSpecialHit2 = loadImage('Assets/Hit-Effect/Special-Attack-2.png');
   ceciliaSpecialHit3 = loadImage('Assets/Hit-Effect/Special-Attack-3.png');
+  ceciliaAssaultBurst = loadImage('Assets/Hit-Effect/AssaultBurst.png');
+  ceciliaOverDriveBurst = loadImage('Assets/Hit-Effect/OverDriveBurst.png');
   
   //load background
   mainmenuBg = loadImage('Assets/Background/mainmenu.png');
@@ -102,39 +105,41 @@ function preload() {
   
   //load enemy's asset
   uE = loadImage('Assets/Enemy/Unknown_Entity_NO8.png');
+  uEStory = loadImage('Assets/Enemy/Unknown_Entity_NO8_Story.png');
+  uEAction = loadImage('Assets/Enemy/Unknown_Entity_NO8_Attack.png');
+  uE2 = loadGif('Assets/Enemy/Unknown_Entity_NO8_Phase_2_Anim.gif');
+  uE2Action = loadGif('Assets/Enemy/Unknown_Entity_NO8_Phase_2_Casting_Anim.gif');
+  uEDead = loadImage ('Assets/Enemy/Ue-Death.png');
   eyePortal = loadGif('Assets/Enemy/Eye-Portal.gif');
 
   //load enemy's hit effect
   uEHit1 = loadImage('Assets/Hit-Effect/UE-Attack-1.png');
   uEHit2 = loadImage('Assets/Hit-Effect/UE-Attack-2.png');
+  uEHit3 = loadImage('Assets/Hit-Effect/UE-Attack-3.png')
   uESpecialHit = loadImage('Assets/Hit-Effect/UE-Special-Attack.png');
+  uESkill = loadImage('Assets/Hit-Effect/Eye-Portal.png');
   
   //load ending
   cgEnding2 = loadImage('Assets/Ending/Ending_2_CG.png');
-  cgGameOver = loadImage('Assets/Ending/GameOver_CG.png')
+  cgGameOver = loadImage('Assets/Ending/GameOver_CG.png');
 
 }
 
 function setup() {
-  if (/Mobi|Android/i.test(navigator.userAgent)) {
-    textAlign(CENTER)
-    text("The game is currently not available on Smartphone", width * 0.5, height * 0.5);
-
-  } else {
-    
+  
   createCanvas(1280, 720);
   
   cecilia = new Cecilia();
   ue = new UE();
   eyePortal = new EyePortal();
   
-  playerHitEffect = new CeciliaHit();
   memoryblade = new MemoryBlade();
   overflowblade = new OverFlowBlade();
+  ceciliaHitEffect = new CeciliaHitEffect();
+  ueHitEffect = new UeHitEffect();
   
   isPlayerTurn = true;
   }
-}
 
 function draw() {
   
@@ -165,38 +170,89 @@ function draw() {
   }
   
   if (currentScreen === "ending_1") {
-    drawEnding1();
+    
+    ending1();
+      
+    //reset character values for a new game 
+    isPlayerTurn = true;
+    cecilia.startOver();
+    cecilia.damageDealt = 0;
+    ue.startOver();
+    eyeCount = eyeMinCount;
+    turnPassed = resetTurn;
+
+    //remove button in previous screen
+    var elements = document.getElementsByClassName("hidden2");
+
+    for (let i = 0; i < elements.length; i++) {
+    elements[i].style.display = "none";
+    }
+  
+    returnToTitle();
+
     if (buttonCreated){
       buttonCreated = false;
         }
+  
 
   }
 
   if (currentScreen === "ending_2") {
-    drawEnding2();
-    if (buttonCreated){
-      buttonCreated = false;
-        }
     
-  }
+    ending2();
 
-  if (currentScreen === "ending_3") {
-    drawEnding3();
-    if (buttonCreated){
-      buttonCreated = false;
-        }
+       //reset character values for a new game 
+       isPlayerTurn = true;
+       cecilia.startOver();
+       cecilia.damageDealt = 0;
+       ue.startOver();
+       eyeCount = eyeMinCount;
+       turnPassed = resetTurn;
+   
     
+      //remove button in previous screen
+      var elements = document.getElementsByClassName("hidden2");
+    
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+      }
+
+      returnToTitle();
+      retry();
+
+      if (buttonCreated){
+        buttonCreated = false;
+          }
   }
   
   if (currentScreen === "game_over") {
-    gameOver();
-    if (buttonCreated){
-      buttonCreated = false;
+   
+    gameOverScreen();
+
+         //reset character values for a new game 
+         isPlayerTurn = true;
+         cecilia.startOver();
+         cecilia.damageDealt = 0;
+         ue.startOver();
+         eyeCount = eyeMinCount;
+         turnPassed = resetTurn;
+     
+      
+        //remove button in previous screen
+        var elements = document.getElementsByClassName("hidden2");
+      
+        for (let i = 0; i < elements.length; i++) {
+          elements[i].style.display = "none";
         }
-  }
   
+        returnToTitle();
+        retry();
 
+        if (buttonCreated){
+          buttonCreated = false;
+            }
 
+  }
   
 }
 
@@ -270,11 +326,6 @@ function drawGamePlayScreen() {
 
   cecilia.show();
   ue.show();
-  
-  // noStroke();
-  // rectMode(CENTER);
-  // fill(0);
-  // rect(width/2,650,windowWidth,230)
  
   if (!cecilia.isOverDrive){
   ceciliaDefaultPortrait();
@@ -323,7 +374,7 @@ function drawGamePlayScreen() {
           SpButton.attribute("disabled", true);
           SpAttackButton.attribute("disabled", true);
 
-          if (endingDelay == 700) {
+          if (endingDelay == 200) {
           currentScreen = "game_over";
         }
 
@@ -335,7 +386,7 @@ function drawGamePlayScreen() {
           SpButton.attribute("disabled", true);
           SpAttackButton.attribute("disabled", true);
 
-          if (endingDelay == 700) {
+          if (endingDelay == 200) {
           currentScreen = "ending_1";
         }
           
@@ -356,7 +407,7 @@ function drawGamePlayScreen() {
       
       cecilia.isDead();
 
-      if (endingDelay == 700) {
+      if (endingDelay == 200) {
       currentScreen = "ending_2";
       }
 
@@ -385,7 +436,7 @@ function drawGamePlayScreen() {
     AtkButton.removeAttribute('disabled');
     AtkButton.style('background-image', 'url(Assets/Button/Attack-Button.png');
 
-    AtkButton.mousePressed(() => { ue, damageDisplayText = cecilia.attack1(ue); cecilia.overDriveCheckReset(); playerHitEffect.show(width/2,0); isAtkMouseOver = false; cecilia.isAlreadyAction = true;});
+    AtkButton.mousePressed(() => { ue, damageDisplayText = cecilia.attack1(ue); cecilia.overDriveCheckReset(); isAtkMouseOver = false; cecilia.isAlreadyAction = true;});
 
     AtkButton.mouseOver(()=> {isAtkMouseOver = true; });
     AtkButton.mouseOut(()=> {isAtkMouseOver = false;  });
@@ -481,16 +532,24 @@ function drawGamePlayScreen() {
 
     if (cecilia.isAlreadyAction) {
       playerActioDelay ++;
+      AtkButton.attribute("disabled", true);
+      SkillButton.attribute("disabled", true);
+      SpButton.attribute("disabled", true);
+      SpAttackButton.attribute("disabled", true);
 
     }
 
-    if (playerActioDelay == 100) {
-      isPlayerTurn = false;
-      cecilia.damageDealt = cecilia.minDamageDealt
+    if (playerActioDelay == 70) {
       cecilia.isAttacking = false;
       cecilia.isSwitching = false;
       cecilia.isChargeAttacking = false;
 
+    }
+
+    if (playerActioDelay == 120) {
+      isPlayerTurn = false;
+      cecilia.damageDealt = cecilia.minDamageDealt
+      
     }
 
     if (cecilia.hp <= cecilia.maxhp * 0.3) {
@@ -501,8 +560,11 @@ function drawGamePlayScreen() {
 
     memoryblade.update();
     cecilia.update();
+    ue.update();
     overflowblade.update();
+    ceciliaHitEffect.update();
 
+    console.log(ue.specialAttackChargePhase2);
   }
 
 
@@ -511,7 +573,6 @@ function drawGamePlayScreen() {
     cecilia.isAlreadyAction = false;
     playerActioDelay = 0;
     actionDelay ++;
-    cecilia.update();
 
     textAlign(CENTER);
     fill(203, 195, 227)
@@ -525,79 +586,28 @@ function drawGamePlayScreen() {
     SpButton.attribute("disabled", true);
     SpAttackButton.attribute("disabled", true);
 
-    if (actionDelay == 50 && ue.hp > ue.maxhp * 0.5 ) {
+    if (actionDelay == 20 && ue.hp > ue.maxhp * 0.5 ) {
       ue.attack1(cecilia);}
   
-      if (actionDelay == 50 && ue.hp <= ue.maxhp * 0.5) {
+      if (actionDelay == 20 && ue.hp <= ue.maxhp * 0.5) {
         ue.attack2(cecilia);}
 
-        if (actionDelay == 150) {
-          ue.isAttacking = false; ue.isCasting = false;
+        if (actionDelay == 100) {
+          ue.isAttacking = false; 
+          ue.isCasting = false;
+          ue.isDraining = false;
         }
 
-        if (actionDelay == 200 && ue.hp < ue.maxhp * 0.3 ) {
+        if (actionDelay == 150 && ue.hp < ue.maxhp * 0.3 ) {
           ue.summonEye(); }
       
-    if (actionDelay == 300) {
+    if (actionDelay == 200) {
         isPlayerTurn = true; ue.isSummoning = false; turnPassed +=1;}
+
+        cecilia.update();
+        ue.update();
+        ueHitEffect.update();
       }
-
-}
-
-
-
-function drawEnding1() {
-  
-  background(10);
-  ending1();
-
-  //remove button in previous screen
-  var elements = document.getElementsByClassName("hidden2");
-
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].style.display = "none";
-  }
-  
-  returnToTitle();
-  
-}
-
-function drawEnding2() {
-  
-  background(10);
-  ending2();
-  
-  returnToTitle();
-  retry();
-
-  //remove button in previous screen
-  var elements = document.getElementsByClassName("hidden2");
-
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].style.display = "none";
-  }
-  
-}
-
-function drawEnding3() {
-  
-  background(10);
-  
-}
-
-function gameOver() {
-  
-  gameoverscreen();
-  
-  returnToTitle();
-  retry();
-
-  //remove button in previous screen
-  var elements = document.getElementsByClassName("hidden2");
-
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].style.display = "none";
-  }
 
 }
 

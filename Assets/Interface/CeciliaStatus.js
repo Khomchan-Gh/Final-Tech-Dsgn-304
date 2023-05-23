@@ -1,6 +1,3 @@
-
-// cecilia = new Cecilia();
-
 function ceciliaName(){
   
   textAlign(LEFT);
@@ -20,7 +17,7 @@ function statusHp(){
   fill(211);
   textFont(novecentoNormal);
   if (cecilia.hp <= cecilia.minhp){
-    text('Cecilia fell unconscious..', width * 0.03 ,height * 0.91-8);
+    text('-', width * 0.03 ,height * 0.91-8);
   } else {
     text('HP: '+cecilia.hp,width * 0.03 ,height * 0.91-8);
   }
